@@ -12,7 +12,7 @@ eleventyComputed:
 ---
 {% from "card.njk" import card %}
 
-<a class="back-link" href="/tags/">← all tags</a>
+<a class="back-link" href="{{ '/tags/' | url }}">← all tags</a>
 <h1 class="page-title">#{{ tag }}</h1>
 
 <ul class="feed">

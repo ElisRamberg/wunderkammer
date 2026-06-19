@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {# Page title falls back to the site title when a page sets none. #}
   <title>{% if title %}{{ title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="{{ '/css/style.css' | url }}">
 </head>
 <body>
   <div class="shell">
@@ -13,12 +13,12 @@
     {# ── Outer chrome: shared on every page ─────────────────────────── #}
     <header class="site-header">
       <div>
-        <a class="brand" href="/">{{ site.title }}</a>
+        <a class="brand" href="{{ '/' | url }}">{{ site.title }}</a>
         <div class="tagline">{{ site.tagline }}</div>
       </div>
       <nav class="site-nav">
         {%- for link in site.nav %}
-        <a href="{{ link.url }}">{{ link.text }}</a>
+        <a href="{{ link.url | url }}">{{ link.text }}</a>
         {%- endfor %}
       </nav>
     </header>

@@ -76,6 +76,12 @@ export default function (eleventyConfig) {
 
   // ── Folder layout ─────────────────────────────────────────────────────
   return {
+    // GitHub Pages serves this site from /wunderkammer/, not the domain
+    // root. The build workflow sets PATH_PREFIX for that; local dev leaves
+    // it unset so http://localhost:8080/ keeps working at the root. Every
+    // absolute link in the templates goes through the `url` filter, which
+    // applies this prefix automatically.
+    pathPrefix: process.env.PATH_PREFIX || "/",
     dir: {
       input: "src",
       output: "_site",

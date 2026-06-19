@@ -12,6 +12,6 @@ permalink: /types/
     {%- for entry in collections.entries %}
       {%- if entry.data.type == type %}{% set count = count + 1 %}{% endif %}
     {%- endfor %}
-  <a class="chip" href="/types/{{ type | slugify }}/">{{ type }} <span style="opacity:.6">({{ count }})</span></a>
+  <a class="chip" href="{{ ('/types/' + (type | slugify) + '/') | url }}">{{ type }} <span style="opacity:.6">({{ count }})</span></a>
   {%- endfor %}
 </div>

@@ -2,7 +2,7 @@
 # This layout renders one entry page, then nests inside the base chrome.
 layout: base.njk
 ---
-<a class="back-link" href="/">← back to the notebook</a>
+<a class="back-link" href="{{ '/' | url }}">← back to the notebook</a>
 
 <article>
   <header>
@@ -12,14 +12,14 @@ layout: base.njk
         <span class="badge badge--{{ status }}">{{ status }}</span>
       {% endif %}
       {% if type %}
-        <span class="type-label"><a class="chip" href="/types/{{ type | slugify }}/">{{ type }}</a></span>
+        <span class="type-label"><a class="chip" href="{{ ('/types/' + (type | slugify) + '/') | url }}">{{ type }}</a></span>
       {% endif %}
       <span>{{ page.date | readableDate }}</span>
     </div>
     {% if tags and tags.length %}
       <div class="chip-list" style="margin-top: var(--space-sm);">
         {%- for tag in tags %}
-        <a class="chip" href="/tags/{{ tag | slugify }}/">#{{ tag }}</a>
+        <a class="chip" href="{{ ('/tags/' + (tag | slugify) + '/') | url }}">#{{ tag }}</a>
         {%- endfor %}
       </div>
     {% endif %}
@@ -32,12 +32,12 @@ layout: base.njk
      Add `allow-...` tokens only as a given tool needs them. #}
   {% if embed %}
     <div class="embed"{% if embedAspect %} style="--embed-aspect: {{ embedAspect }}"{% endif %}>
-      <iframe src="{{ embed }}"
+      <iframe src="{{ embed | url }}"
               title="{{ title }}"
               loading="lazy"
               sandbox="allow-scripts allow-same-origin"></iframe>
     </div>
-    <p class="meta"><a href="{{ embed }}" target="_blank" rel="noopener">Open this experiment full-screen ↗</a></p>
+    <p class="meta"><a href="{{ embed | url }}" target="_blank" rel="noopener">Open this experiment full-screen ↗</a></p>
   {% endif %}
 
   {# ── External video embed ─────────────────────────────────────────────

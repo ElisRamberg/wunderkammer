@@ -14,6 +14,6 @@ permalink: /tags/
     {%- for entry in collections.entries %}
       {%- if tag in entry.data.tags %}{% set count = count + 1 %}{% endif %}
     {%- endfor %}
-  <a class="chip" href="/tags/{{ tag | slugify }}/">#{{ tag }} <span style="opacity:.6">({{ count }})</span></a>
+  <a class="chip" href="{{ ('/tags/' + (tag | slugify) + '/') | url }}">#{{ tag }} <span style="opacity:.6">({{ count }})</span></a>
   {%- endfor %}
 </div>

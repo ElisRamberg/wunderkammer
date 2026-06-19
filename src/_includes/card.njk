@@ -10,7 +10,7 @@
 {% macro card(entry) %}
 <li class="card">
   <h2 class="card-title">
-    <a class="card-title-link" href="{{ entry.url }}">{{ entry.data.title }}</a>
+    <a class="card-title-link" href="{{ entry.url | url }}">{{ entry.data.title }}</a>
   </h2>
 
   <div class="meta">
@@ -34,7 +34,7 @@
   {% if entry.data.tags and entry.data.tags.length %}
     <div class="chip-list" style="margin-top: var(--space-sm);">
       {%- for tag in entry.data.tags %}
-      <a class="chip" href="/tags/{{ tag | slugify }}/">#{{ tag }}</a>
+      <a class="chip" href="{{ ('/tags/' + (tag | slugify) + '/') | url }}">#{{ tag }}</a>
       {%- endfor %}
     </div>
   {% endif %}
