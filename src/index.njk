@@ -1,16 +1,55 @@
 ---
 layout: base.njk
+bodyClass: page-home
 # No `title` so the tab shows just the site name on the homepage.
 ---
 {% from "card.njk" import card %}
 
-<h1 class="page-title">The Notebook</h1>
-<p class="meta">{{ collections.entries.length }} entr{% if collections.entries.length == 1 %}y{% else %}ies{% endif %} · newest first</p>
+<h1 class="page-title page-title--home">The Notebook</h1>
+<p class="page-intro">
+  <span data-feed-count>{{ collections.entries.length }}</span>
+  entr{% if collections.entries.length == 1 %}y{% else %}ies{% endif %} · newest first
+</p>
 
-{# The feed builds ITSELF from every public entry — never hand-edited.
-   `collections.entries` is defined in eleventy.config.js. #}
-<ul class="feed">
-  {%- for entry in collections.entries %}
-  {{ card(entry) }}
-  {%- endfor %}
-</ul>
+<div class="layout">
+  {# ── Main column: the feed. Builds ITSELF from every public entry. ──── #}
+  <div class="layout-main">
+    <ul class="feed" data-feed>
+      {%- for entry in collections.entries %}
+      {{ card(entry) }}
+      {%- endfor %}
+    </ul>
+  </div>
+
+  {# ── Right column: in-place filters. Links double as no-JS fallbacks
+       (they point at the real /types|/tags pages). ─────────────────────── #}
+  <aside class="sidebar" data-filters>
+    <button type="button" class="filter-reset" data-filter-reset hidden>← clear filter</button>
+
+    {% if collections.entryTypes.length %}
+    <section class="filter-group">
+      <h2 class="filter-heading">Type</h2>
+      <div class="filter-list">
+        {%- for type in collections.entryTypes %}
+        <a class="filter" href="{{ ('/types/' + (type | slugify) + '/') | url }}"
+           data-kind="type" data-filter="{{ type | slugify }}">{{ type }}</a>
+        {%- endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    {% if collections.entryTags.length %}
+    <section class="filter-group">
+      <h2 class="filter-heading">Tags</h2>
+      <div class="filter-list">
+        {%- for tag in collections.entryTags %}
+        <a class="filter" href="{{ ('/tags/' + (tag | slugify) + '/') | url }}"
+           data-kind="tag" data-filter="{{ tag | slugify }}">#{{ tag }}</a>
+        {%- endfor %}
+      </div>
+    </section>
+    {% endif %}
+  </aside>
+</div>
+
+<script src="{{ '/js/filters.js' | url }}" defer></script>

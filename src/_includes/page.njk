@@ -1,0 +1,10 @@
+---
+# A simple centered prose page (About, colophon, etc.). Markdown bodies that
+# set `layout: page.njk` get wrapped in the reading column and nested in the
+# base chrome. Use this for plain text pages — not the feed or entries.
+layout: base.njk
+---
+<article class="prose page-prose">
+  {% if title %}<h1 class="page-title">{{ title }}</h1>{% endif %}
+  {{ content | safe }}
+</article>

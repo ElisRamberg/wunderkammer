@@ -10,6 +10,8 @@ export default function (eleventyConfig) {
   // ── Copy files into the built site untouched ──────────────────────────
   // CSS is hand-written; Eleventy should just copy it across as-is.
   eleventyConfig.addPassthroughCopy({ "src/css": "css" });
+  // Hand-written vanilla JS (e.g. the homepage filter sidebar) — copied as-is.
+  eleventyConfig.addPassthroughCopy({ "src/js": "js" });
 
   // Interactive tools live in their OWN top-level folder, fully decoupled
   // from Eleventy (each has its own stack / build step). We copy the whole

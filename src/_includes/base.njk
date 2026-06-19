@@ -7,7 +7,7 @@
   <title>{% if title %}{{ title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
   <link rel="stylesheet" href="{{ '/css/style.css' | url }}">
 </head>
-<body>
+<body class="{{ bodyClass }}">
   <div class="shell">
 
     {# ── Outer chrome: shared on every page ─────────────────────────── #}

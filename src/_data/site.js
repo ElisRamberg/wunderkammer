@@ -12,7 +12,6 @@ export default {
   // Add or reorder freely — purely a list.
   nav: [
     { text: "Home", url: "/" },
-    { text: "Tags", url: "/tags/" },
-    { text: "Types", url: "/types/" },
+    { text: "About", url: "/about/" },
   ],
 };

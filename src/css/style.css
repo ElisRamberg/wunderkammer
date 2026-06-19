@@ -2,6 +2,10 @@
    LAYOUT & CHROME
    The consistent outer frame shared by every page. All values come from
    tokens.css — avoid hardcoding colors/sizes here; add a token instead.
+
+   Theme intent: a clean white "notebook". Faint dot-grid paper, editorial
+   serif content, small uppercase mono labels, hairline-divided entries with
+   a hanging index number in the margin.
    ═══════════════════════════════════════════════════════════════════════ */
 
 @import "tokens.css";
@@ -9,41 +13,124 @@
 /* ── Reset-ish base ───────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
+html { -webkit-text-size-adjust: 100%; }
+
 body {
   margin: 0;
-  background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-body);
   font-size: var(--text-base);
   line-height: var(--leading);
+  /* Pure-white page carrying a very faint dot-grid — the only "notebook"
+     texture. Two layers: the dots, then the flat white beneath. */
+  background-color: var(--color-bg);
+  background-image: radial-gradient(var(--c-dot) 1px, transparent 1.2px);
+  background-size: 22px 22px;
+  background-position: -1px -1px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-a { color: var(--color-link); }
+a { color: var(--color-link); text-underline-offset: 2px; }
 
 img, iframe { max-width: 100%; }
 
+/* Shared "label" treatment: small uppercase mono. Used by nav/meta/badges. */
+.label,
+.site-nav a,
+.meta,
+.badge,
+.back-link {
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  letter-spacing: var(--label-spacing);
+  text-transform: uppercase;
+}
+
 /* ── Page shell ───────────────────────────────────────────────────────── */
+/* Default shell is a narrow reading column (entries, About, tag/type pages).
+   The homepage opts into a wider shell to make room for the filter sidebar. */
 .shell {
   max-width: var(--feed-width);
   margin: 0 auto;
-  padding: var(--space-lg) var(--space-md) var(--space-xl);
+  padding: var(--space-xl) var(--space-lg) var(--space-xxl);
 }
+.page-home .shell { max-width: var(--wide-width); }
+
+/* ── Two-column layout: feed + filter sidebar (homepage) ──────────────── */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
+  gap: var(--space-xxl);
+  align-items: start;
+}
+.layout-main { min-width: 0; }
+
+/* ── Filter sidebar ───────────────────────────────────────────────────── */
+.sidebar {
+  position: sticky;
+  top: var(--space-xl);
+  font-family: var(--font-label);
+}
+.filter-group { margin-bottom: var(--space-lg); }
+.filter-heading {
+  font-family: var(--font-label);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: var(--label-spacing);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-sm);
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--color-border);
+}
+.filter-list { display: flex; flex-direction: column; align-items: flex-start; gap: 0.15rem; }
+.filter {
+  display: inline-block;
+  font-size: var(--text-sm);
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  padding: 0.2rem 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.filter:hover { color: var(--color-text); }
+.filter.is-active {
+  color: var(--color-link);
+  border-bottom-color: var(--color-link);
+}
+.filter-reset {
+  font-family: var(--font-label);
+  font-size: var(--text-sm);
+  letter-spacing: var(--label-spacing);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  background: none;
+  border: 0;
+  padding: 0 0 var(--space-md);
+  cursor: pointer;
+}
+.filter-reset:hover { color: var(--color-link); }
 
 /* ── Top navigation (chrome) ──────────────────────────────────────────── */
 .site-header {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: var(--space-sm);
-  padding-bottom: var(--space-md);
-  border-bottom: var(--card-border);
-  margin-bottom: var(--space-lg);
+  gap: var(--space-md);
+  padding-bottom: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  border-bottom: 1px solid var(--color-border);
 }
 .site-header .brand {
   font-family: var(--font-heading);
   font-size: var(--text-lg);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--color-text);
   text-decoration: none;
   letter-spacing: -0.01em;
@@ -51,137 +138,198 @@ img, iframe { max-width: 100%; }
 .site-header .tagline {
   color: var(--color-text-muted);
   font-size: var(--text-sm);
-  font-style: italic;
+  font-family: var(--font-label);
+  letter-spacing: var(--label-spacing);
+  text-transform: uppercase;
+  margin-top: 0.35rem;
 }
-.site-nav { display: flex; gap: var(--space-md); }
+.site-nav { display: flex; gap: var(--space-lg); }
 .site-nav a {
-  font-family: var(--font-heading);
-  font-size: var(--text-sm);
   text-decoration: none;
   color: var(--color-text-muted);
+  padding-bottom: 2px;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
-.site-nav a:hover { color: var(--color-link); }
+.site-nav a:hover {
+  color: var(--color-text);
+  border-bottom-color: var(--color-text);
+}
 
 /* ── Footer ───────────────────────────────────────────────────────────── */
 .site-footer {
-  margin-top: var(--space-xl);
+  margin-top: var(--space-xxl);
   padding-top: var(--space-md);
-  border-top: var(--card-border);
+  border-top: 1px solid var(--color-border);
   color: var(--color-text-muted);
+  font-family: var(--font-label);
   font-size: var(--text-sm);
+  letter-spacing: var(--label-spacing);
+  text-transform: uppercase;
 }
 
 /* ── Headings ─────────────────────────────────────────────────────────── */
-h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; }
-.page-title { font-size: var(--text-xl); margin: 0 0 var(--space-xs); }
+h1, h2, h3 { font-family: var(--font-heading); line-height: 1.15; font-weight: 600; }
 
-/* ── The feed: a grid of cards ────────────────────────────────────────── */
+/* Homepage / listing masthead — large serif to anchor the page. */
+.page-title {
+  font-size: var(--text-xl);
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--space-sm);
+}
+.page-title--home { font-size: var(--text-xxl); }
+
+/* The little count/intro line that sits under a page title. */
+.page-intro {
+  font-family: var(--font-label);
+  font-size: var(--text-sm);
+  letter-spacing: var(--label-spacing);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-xl);
+}
+
+/* ── The feed: a numbered list of hairline-divided entries ────────────── */
 .feed {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  gap: var(--card-gap);
+  counter-reset: feed;             /* auto-numbers entries; no template edits */
+  border-top: 1px solid var(--color-border);
 }
 
-/* ── Card (the consistent content container) ──────────────────────────── */
+/* ── Card (one entry row in a listing) ────────────────────────────────── */
 .card {
+  position: relative;
+  counter-increment: feed;
   background: var(--card-bg);
-  border: var(--card-border);
-  border-radius: var(--card-radius);
-  padding: var(--card-pad);
-  box-shadow: var(--card-shadow);
+  padding: var(--space-lg) 0 var(--space-lg) var(--gutter);
+  border-bottom: 1px solid var(--color-border);
+  transition: background 0.15s ease;
 }
+/* Hanging index number in the left margin, like a dated notebook entry. */
+.card::before {
+  content: counter(feed, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: var(--space-lg);
+  font-family: var(--font-label);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  opacity: 0.55;
+}
+.card:hover { background: var(--color-border-soft); }
+
 .card a.card-title-link { text-decoration: none; color: var(--color-text); }
 .card a.card-title-link:hover { color: var(--color-link); }
-.card-title { font-size: var(--text-lg); margin: 0 0 var(--space-xs); }
-.card-excerpt { color: var(--color-text-muted); margin: var(--space-sm) 0 0; }
+.card-title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin: 0 0 var(--space-xs);
+}
+.card-excerpt { color: var(--color-text-muted); margin: var(--space-sm) 0 0; max-width: var(--content-width); }
 
 /* Row of metadata under a card/entry title */
 .meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-md);
   margin-top: var(--space-sm);
-  font-family: var(--font-heading);
-  font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
+.meta a { color: var(--color-text-muted); text-decoration: none; }
+.meta a:hover { color: var(--color-link); }
 
-/* ── Status badge ─────────────────────────────────────────────────────── */
-/* Base pill; the per-status color comes from a modifier class below.
-   To add a new status: add a color pair in tokens.css and one rule here. */
+/* ── Status badge: a small colored dot + muted uppercase label ────────── */
 .badge {
-  display: inline-block;
-  font-family: var(--font-heading);
-  font-size: var(--badge-size);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
   font-weight: var(--badge-weight);
-  padding: var(--badge-pad);
-  border-radius: var(--badge-radius);
-  text-transform: lowercase;
-  letter-spacing: 0.02em;
-  background: var(--c-status-idea-bg);   /* sensible fallback */
-  color: var(--c-status-idea-text);
+  color: var(--color-text-muted);
 }
-.badge--idea      { background: var(--c-status-idea-bg);      color: var(--c-status-idea-text); }
-.badge--prototype { background: var(--c-status-prototype-bg); color: var(--c-status-prototype-text); }
-.badge--working   { background: var(--c-status-working-bg);   color: var(--c-status-working-text); }
-.badge--polished  { background: var(--c-status-polished-bg);  color: var(--c-status-polished-text); }
+.badge::before {
+  content: "";
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: var(--c-status-idea);   /* sensible fallback */
+}
+.badge--idea::before      { background: var(--c-status-idea); }
+.badge--prototype::before { background: var(--c-status-prototype); }
+.badge--working::before   { background: var(--c-status-working); }
+.badge--polished::before  { background: var(--c-status-polished); }
 
 /* ── Tag chips ────────────────────────────────────────────────────────── */
 .chip {
   display: inline-block;
-  font-family: var(--font-heading);
+  font-family: var(--font-label);
   font-size: var(--text-sm);
+  letter-spacing: 0.04em;
   padding: var(--chip-pad);
   border-radius: var(--chip-radius);
-  background: var(--color-chip-bg);
+  border: 1px solid var(--color-border);
+  background: transparent;
   color: var(--color-text-muted);
   text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
-.chip:hover { color: var(--color-link); }
+.chip:hover { color: var(--color-link); border-color: var(--color-link); }
 .chip-list { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
 
 /* The "type" label gets a subtle distinct look from tags */
-.type-label { font-style: italic; }
+.type-label { font-style: normal; }
+.meta .type-label .chip { border: 0; padding: 0; text-transform: uppercase; }
 
 /* ── Prose: the reading column for a single entry's body ──────────────── */
 .prose {
   max-width: var(--content-width);
+  font-size: 1.12rem;
 }
 .prose p, .prose ul, .prose ol, .prose blockquote { margin: var(--space-md) 0; }
-.prose h2 { margin-top: var(--space-lg); }
+.prose h2 { margin-top: var(--space-xl); font-size: 1.6rem; letter-spacing: -0.01em; }
+.prose h3 { margin-top: var(--space-lg); font-size: 1.3rem; }
+.prose a { text-decoration: underline; text-decoration-thickness: 1px; }
 .prose code {
   font-family: var(--font-mono);
-  font-size: 0.9em;
-  background: var(--color-chip-bg);
-  padding: 0.05em 0.3em;
-  border-radius: 4px;
+  font-size: 0.88em;
+  background: var(--color-border-soft);
+  padding: 0.08em 0.35em;
+  border-radius: 3px;
 }
 .prose pre {
-  background: var(--color-card-bg);
-  border: var(--card-border);
+  background: #fafafa;
+  border: 1px solid var(--color-border);
   border-radius: var(--card-radius);
   padding: var(--space-md);
   overflow-x: auto;
+  font-size: 0.92rem;
+  line-height: 1.5;
 }
-.prose pre code { background: none; padding: 0; }
+.prose pre code { background: none; padding: 0; font-size: inherit; }
 .prose blockquote {
-  border-left: 3px solid var(--color-border);
+  border-left: 2px solid var(--color-text);
   padding-left: var(--space-md);
+  margin-left: 0;
   color: var(--color-text-muted);
   font-style: italic;
 }
+.prose hr { border: 0; border-top: 1px solid var(--color-border); margin: var(--space-xl) 0; }
+.prose img { border-radius: var(--card-radius); }
+
+/* ── Entry page header block ──────────────────────────────────────────── */
+article > header { margin-bottom: var(--space-xl); }
 
 /* ── Embeds: responsive 16:9 frames for iframes & external video ──────── */
-/* Used by both interactive tools and YouTube/Vimeo embeds. */
 .embed {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  margin: var(--space-md) 0;
-  border: var(--card-border);
+  margin: var(--space-lg) 0;
+  border: 1px solid var(--color-border);
   border-radius: var(--card-radius);
   overflow: hidden;
   background: var(--color-card-bg);
@@ -193,20 +341,46 @@ h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; }
   height: 100%;
   border: 0;
 }
-/* Interactive tools sometimes want to be taller than 16:9 — opt in with
-   style="--embed-aspect: 4/5" on the .embed element, or use .embed--tall. */
 .embed[style*="--embed-aspect"] { aspect-ratio: var(--embed-aspect); }
 .embed--tall { aspect-ratio: 3 / 4; }
 
 /* Back link on entry pages */
 .back-link {
-  font-family: var(--font-heading);
-  font-size: var(--text-sm);
   display: inline-block;
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-lg);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.back-link:hover { color: var(--color-text); border-bottom-color: var(--color-text); }
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+/* Below the two-column breakpoint, the sidebar drops under the feed and its
+   filters lay out as a horizontal wrap (a compact filter bar). */
+@media (max-width: 52rem) {
+  .layout { grid-template-columns: 1fr; gap: var(--space-xl); }
+  .sidebar {
+    position: static;
+    order: -1;
+    margin-bottom: var(--space-md);
+  }
+  .filter-group { margin-bottom: var(--space-md); }
+  .filter-list { flex-direction: row; flex-wrap: wrap; gap: var(--space-xs) var(--space-md); }
+  .filter { padding: 0.1rem 0; }
 }
 
-/* Small responsive niceties */
-@media (max-width: 32rem) {
-  .site-header { flex-direction: column; }
+@media (max-width: 40rem) {
+  .shell { padding: var(--space-lg) var(--space-md) var(--space-xl); }
+  :root { --gutter: 0rem; }
+  .card { padding-left: 0; }
+  /* On narrow screens the hanging number becomes an inline prefix. */
+  .card::before {
+    position: static;
+    display: block;
+    margin-bottom: var(--space-xs);
+    opacity: 0.5;
+  }
+  .page-title--home { font-size: var(--text-xl); }
+  .site-header { flex-direction: column; align-items: flex-start; }
 }

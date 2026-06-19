@@ -9,29 +9,31 @@
    the raw palette; the "semantic" values below map them to roles. Change a
    primitive to shift everything that uses it; change a semantic to re-point
    one role at a different primitive.
+
+   Current theme: "clean white notebook" — pure white, a faint dot-grid
+   background, editorial serif titles, small uppercase mono labels, and a
+   single restrained pen-ink-blue accent.
    ═══════════════════════════════════════════════════════════════════════ */
 
 :root {
   /* ── Color primitives — the raw palette ─────────────────────────────── */
-  --c-ink:        #1c1b19;  /* near-black text            */
-  --c-ink-soft:   #5c594f;  /* muted/secondary text       */
-  --c-paper:      #faf8f3;  /* page background (warm)      */
-  --c-surface:    #ffffff;  /* cards / raised surfaces     */
-  --c-line:       #e6e1d6;  /* hairline borders           */
-  --c-accent:     #b5532a;  /* links, highlights          */
-  --c-accent-dim: #f0e3da;  /* accent tint background      */
+  --c-ink:        #1a1a1c;  /* near-black text             */
+  --c-ink-soft:   #76757a;  /* muted/secondary text        */
+  --c-paper:      #ffffff;  /* page background (pure white) */
+  --c-surface:    #ffffff;  /* cards / raised surfaces      */
+  --c-line:       #ececea;  /* hairline borders            */
+  --c-line-soft:  #f3f3f1;  /* even fainter rules          */
+  --c-dot:        #e7e7e3;  /* dot-grid background dots     */
+  --c-accent:     #2f4d8a;  /* pen-ink blue: links, hover  */
+  --c-accent-dim: #eef1f7;  /* accent tint background       */
 
-  /* Status colors — one pair (text + background) per maturity level.
-     Add a new status by adding a matching pair, then referencing it in the
-     badge rules in style.css. Nothing else hardcodes these names. */
-  --c-status-idea-bg:      #efe9df;
-  --c-status-idea-text:    #6b6452;
-  --c-status-prototype-bg: #e7eef0;
-  --c-status-prototype-text:#3f6b78;
-  --c-status-working-bg:   #e6efe4;
-  --c-status-working-text: #3f6b46;
-  --c-status-polished-bg:  #efe6f0;
-  --c-status-polished-text:#6b4478;
+  /* Status colors — a muted dot + label per maturity level.
+     Add a new status by adding a color, then referencing it in the badge
+     rules in style.css. Nothing else hardcodes these names. */
+  --c-status-idea:      #b08d57;  /* warm pencil   */
+  --c-status-prototype: #4d8aa8;  /* blue         */
+  --c-status-working:   #4f9163;  /* green        */
+  --c-status-polished:  #8a5fa8;  /* violet       */
 
   /* ── Semantic colors — roles that map to primitives ─────────────────── */
   --color-text:        var(--c-ink);
@@ -39,19 +41,28 @@
   --color-bg:          var(--c-paper);
   --color-card-bg:     var(--c-surface);
   --color-border:      var(--c-line);
+  --color-border-soft: var(--c-line-soft);
   --color-link:        var(--c-accent);
   --color-chip-bg:     var(--c-accent-dim);
 
   /* ── Typography ─────────────────────────────────────────────────────── */
-  --font-body:    Georgia, "Times New Roman", serif;
-  --font-heading: "Helvetica Neue", Arial, sans-serif;
+  /* Serif carries the content (titles + prose); mono carries the "labels"
+     (meta, nav, badges) for that quiet, annotated notebook feel. */
+  --font-body:    "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-heading: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-label:   ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
   --font-mono:    ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  --text-base:  1.05rem;   /* body size            */
-  --text-sm:    0.85rem;   /* badges, meta         */
-  --text-lg:    1.35rem;   /* card titles          */
-  --text-xl:    2.2rem;    /* page titles          */
-  --leading:    1.6;       /* line height for prose */
+  --text-base:  1.075rem;  /* body size            */
+  --text-sm:    0.72rem;   /* badges, meta, labels */
+  --text-lg:    1.5rem;    /* card titles          */
+  --text-xl:    2.6rem;    /* page titles          */
+  --text-xxl:   3.4rem;    /* homepage masthead    */
+  --leading:    1.7;       /* line height for prose */
+
+  /* Mono "label" treatment, reused across nav / meta / badges. */
+  --label-spacing:  0.12em;
+  --label-size:     var(--text-sm);
 
   /* ── Spacing scale ──────────────────────────────────────────────────── */
   --space-xs: 0.35rem;
@@ -59,24 +70,25 @@
   --space-md: 1rem;
   --space-lg: 1.75rem;
   --space-xl: 3rem;
+  --space-xxl: 5rem;
 
   /* ── Layout ─────────────────────────────────────────────────────────── */
-  --content-width: 46rem;   /* max width of reading column */
-  --feed-width:    60rem;   /* max width of the card feed  */
+  --content-width: 42rem;   /* max width of reading column          */
+  --feed-width:    46rem;   /* narrow shell: entries, About, filters */
+  --wide-width:    66rem;   /* homepage shell (feed + sidebar)       */
+  --sidebar-width: 13rem;   /* right-hand filter column              */
+  --gutter:        3.25rem; /* left margin for hanging index numbers */
 
-  /* ── Cards ──────────────────────────────────────────────────────────── */
-  --card-bg:      var(--color-card-bg);
+  /* ── Cards (now borderless rows divided by hairlines) ───────────────── */
+  --card-bg:      transparent;
   --card-border:  1px solid var(--color-border);
-  --card-radius:  10px;
+  --card-radius:  4px;
   --card-pad:     var(--space-lg);
-  --card-shadow:  0 1px 2px rgba(28, 27, 25, 0.04);
-  --card-gap:     var(--space-lg);  /* space between cards in the feed */
+  --card-gap:     0;  /* rows touch; the hairline divider separates them */
 
-  /* ── Badges & chips (status pills, tag chips) ───────────────────────── */
-  --badge-radius:  999px;
-  --badge-pad:     0.15rem 0.6rem;
-  --badge-size:    var(--text-sm);
-  --badge-weight:  600;
-  --chip-radius:   6px;
-  --chip-pad:      0.1rem 0.5rem;
+  /* ── Badges & chips (status dots, tag chips) ────────────────────────── */
+  --badge-size:    var(--label-size);
+  --badge-weight:  500;
+  --chip-radius:   3px;
+  --chip-pad:      0.1rem 0.45rem;
 }

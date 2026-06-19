@@ -8,7 +8,11 @@
    `entry` is one item from a collection (e.g. collections.entries).
    ─────────────────────────────────────────────────────────────────────── #}
 {% macro card(entry) %}
-<li class="card">
+{# data-type / data-tags carry slugified metadata so the homepage filter
+   sidebar can show/hide cards in place (see /js/filters.js). #}
+<li class="card"
+    data-type="{{ entry.data.type | slugify if entry.data.type else '' }}"
+    data-tags="{% for tag in entry.data.tags %}{{ tag | slugify }} {% endfor %}">
   <h2 class="card-title">
     <a class="card-title-link" href="{{ entry.url | url }}">{{ entry.data.title }}</a>
   </h2>
