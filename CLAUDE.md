@@ -12,11 +12,25 @@ comes from a consistent outer frame (chrome); content underneath stays flexible.
 - Eleventy ONLY assembles content into templates + auto-generates the feed and
   filter pages. It designs nothing. All design is hand-written HTML/CSS.
 - Plain HTML + CSS. Markdown for entries. No build frameworks for the main site.
-- Free static hosting later (Cloudflare Pages / GitHub Pages). No recurring cost.
+- Hosted free on GitHub Pages. No recurring cost.
 
 ## Commands
 - `npm run dev` (or `npm start`) — dev server + live reload at http://localhost:8080/
 - `npm run build` — one-off build into `_site/` (the build output; git-ignored).
+
+## Hosting & deployment
+- Repo: https://github.com/ElisRamberg/wunderkammer (public)
+- Live site: https://elisramberg.github.io/wunderkammer/
+- `.github/workflows/deploy.yml` auto-builds and publishes to GitHub Pages on
+  every push to `main`. Just commit + push to ship changes — no manual steps.
+- GitHub Pages serves this as a PROJECT site from the `/wunderkammer/` subpath,
+  not the domain root. To make links work in both places, `eleventy.config.js`
+  sets `pathPrefix` from a `PATH_PREFIX` env var (set only in the CI workflow;
+  unset locally so dev server stays at `/`). Every absolute href/src in the
+  templates is run through Eleventy's `url` filter so it picks up that prefix.
+  **When adding new absolute links in templates, always wrap them in `| url`**
+  (see base.njk, card.njk, entry.njk, tag.njk/type.njk for the pattern) —
+  otherwise they'll silently break on the live site while still working locally.
 
 ## Structure
 - `eleventy.config.js` — the only logic file. Defines passthrough copies and the
@@ -63,4 +77,4 @@ direct URL on a static host. Treat private as "unlisted". No secrets in entries.
 - New video entry: add a `.md` with a `video:` embed URL (file never committed).
 
 ## Not done yet (future steps)
-- GitHub repo + deployment (Cloudflare Pages / GitHub Pages) — deliberately deferred.
+- Custom domain (currently on the default github.io subdomain).
