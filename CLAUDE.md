@@ -49,6 +49,37 @@ comes from a consistent outer frame (chrome); content underneath stays flexible.
   copied verbatim into the site and embedded via sandboxed iframe. Decoupled so a
   tool can never break the main build.
 
+## Big interactive tools (with their own build step)
+`terrain-experiment` is a no-build tool: its source IS its shipped file, so it
+lives directly in `interactive/`. A serious tool (map app, bundler, framework)
+must NOT keep its source/node_modules in `interactive/`, because Eleventy copies
+that whole folder verbatim into production. Split it:
+- `tools/<tool>/` — the actual dev PROJECT (own package.json, deps, src, dev
+  server, bundler). Worked on independently; run its own `npm run dev`.
+- `interactive/<tool>/` — ONLY the tool's BUILD OUTPUT. Point the tool's bundler
+  to emit here (e.g. Vite `outDir: ../../interactive/<tool>/`). Commit this
+  output; no GitHub Actions change needed (matches how we commit `_site`-style
+  artifacts elsewhere — though `interactive/` output IS committed, unlike `_site`).
+- `src/entries/<tool>.md` — the blog entry; `embed:` points at `/interactive/<tool>/`.
+Invariant to preserve: **`interactive/` only ever holds shippable static files.**
+Keep one tool in this repo's `tools/` for now; if it grows its own identity
+(domain, backend, release cadence) split it to its own repo and just point the
+entry's `embed`/full-screen link at wherever it's hosted. Needs a live backend?
+GitHub Pages can't run one — host that piece separately (e.g. Cloudflare Worker)
+and have the static frontend fetch from it; the blog side stays unchanged.
+
+## Two ways a tool is presented (both stay linked to the notebook)
+1. **Embedded preview** — sandboxed iframe inside the notebook chrome, sized to
+   the entry. Good for small demos seen in-context in the feed.
+2. **Detached full-bleed** — the tool's own URL (`/interactive/<tool>/`), opened
+   via entry.njk's "Open full-screen ↗" link. No blog chrome, no shared
+   background — it feels like its own standalone app, yet is still hosted under
+   the same site and reached only through its notebook entry. This is the
+   intended path for big tools (a map app shouldn't live in a small window) and
+   is the clearest expression of "a notebook that can grow up": an entry can
+   graduate into something that feels like its own product while staying
+   anchored in the notebook.
+
 ## Entry frontmatter (intentionally loose — extend any time, no restructuring)
 ```
 title:        # required
