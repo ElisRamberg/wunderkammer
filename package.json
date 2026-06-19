@@ -1,0 +1,15 @@
+{
+  "name": "wunderkammer",
+  "version": "1.0.0",
+  "description": "A personal notebook website — a place to drop projects, experiments, writing, and ideas.",
+  "type": "module",
+  "scripts": {
+    "start": "eleventy --serve",
+    "dev": "eleventy --serve",
+    "build": "eleventy"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.6"
+  }
+}

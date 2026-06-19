@@ -1,0 +1,42 @@
+{# ───────────────────────────────────────────────────────────────────────
+   Reusable entry CARD macro.
+   Import and call it from any listing page so every card looks identical:
+
+     {% from "card.njk" import card %}
+     {{ card(entry) }}
+
+   `entry` is one item from a collection (e.g. collections.entries).
+   ─────────────────────────────────────────────────────────────────────── #}
+{% macro card(entry) %}
+<li class="card">
+  <h2 class="card-title">
+    <a class="card-title-link" href="{{ entry.url }}">{{ entry.data.title }}</a>
+  </h2>
+
+  <div class="meta">
+    {# Status/maturity badge — color picked by the badge--<status> class. #}
+    {% if entry.data.status %}
+      <span class="badge badge--{{ entry.data.status }}">{{ entry.data.status }}</span>
+    {% endif %}
+    {# Loose "type" label. #}
+    {% if entry.data.type %}
+      <span class="type-label">{{ entry.data.type }}</span>
+    {% endif %}
+    <span>{{ entry.date | readableDate }}</span>
+  </div>
+
+  {# Optional one-line summary from frontmatter. #}
+  {% if entry.data.summary %}
+    <p class="card-excerpt">{{ entry.data.summary }}</p>
+  {% endif %}
+
+  {# Tag chips link to the matching filter page. #}
+  {% if entry.data.tags and entry.data.tags.length %}
+    <div class="chip-list" style="margin-top: var(--space-sm);">
+      {%- for tag in entry.data.tags %}
+      <a class="chip" href="/tags/{{ tag | slugify }}/">#{{ tag }}</a>
+      {%- endfor %}
+    </div>
+  {% endif %}
+</li>
+{% endmacro %}

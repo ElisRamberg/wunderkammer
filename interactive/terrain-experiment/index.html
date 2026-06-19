@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  SELF-CONTAINED INTERACTIVE TOOL  ·  terrain-experiment
+
+  This folder is its OWN little world. It is NOT processed by Eleventy — the
+  whole folder is copied verbatim into the built site at
+  /interactive/terrain-experiment/ and embedded back into the notebook via a
+  sandboxed iframe (see src/entries/terrain-experiment.md).
+
+  Because it's decoupled, you can build this with ANY stack you want
+  (vanilla like this, or React/Vite/Three.js/etc. with its own build step) and
+  it can never break the main site. If a tool needs a build, run that build so
+  its output lands here as a plain index.html + assets, then commit the output.
+
+  To make a new interactive entry: copy this whole folder, rename it, change
+  the code, and add a matching .md metadata file under src/entries/.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Terrain experiment</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #11100e; overflow: hidden; }
+    canvas { display: block; width: 100%; height: 100%; }
+    .hint {
+      position: fixed; left: 12px; bottom: 10px;
+      font: 12px/1.4 system-ui, sans-serif; color: #b9b3a4;
+      background: rgba(0,0,0,.35); padding: 4px 8px; border-radius: 6px;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div class="hint">move your cursor — flowing contour lines</div>
+
+  <script>
+    // A small, dependency-free animated "terrain" of drifting contour lines
+    // that bend toward the cursor. Purely illustrative of a self-contained tool.
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+    let w, h, t = 0;
+    const mouse = { x: 0.5, y: 0.5 };
+
+    function resize() {
+      w = canvas.width = canvas.clientWidth * devicePixelRatio;
+      h = canvas.height = canvas.clientHeight * devicePixelRatio;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    window.addEventListener("pointermove", (e) => {
+      const r = canvas.getBoundingClientRect();
+      mouse.x = (e.clientX - r.left) / r.width;
+      mouse.y = (e.clientY - r.top) / r.height;
+    });
+
+    function draw() {
+      t += 0.006;
+      ctx.fillStyle = "#11100e";
+      ctx.fillRect(0, 0, w, h);
+
+      const lines = 28;
+      for (let i = 0; i < lines; i++) {
+        const baseY = (i / lines) * h;
+        const hue = 24 + (i / lines) * 26; // warm earthy band
+        ctx.strokeStyle = `hsla(${hue}, 45%, ${40 + (i / lines) * 25}%, .8)`;
+        ctx.lineWidth = 1.2 * devicePixelRatio;
+        ctx.beginPath();
+        for (let x = 0; x <= w; x += 8 * devicePixelRatio) {
+          const nx = x / w;
+          const pull = (1 - Math.hypot(nx - mouse.x, baseY / h - mouse.y)) * 60 * devicePixelRatio;
+          const y =
+            baseY +
+            Math.sin(nx * 6 + t + i * 0.3) * 18 * devicePixelRatio +
+            Math.sin(nx * 13 - t * 1.3) * 8 * devicePixelRatio +
+            pull;
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  </script>
+</body>
+</html>

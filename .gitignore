@@ -1,0 +1,13 @@
+# Build output — regenerated on every build, never commit it.
+_site/
+
+# Dependencies
+node_modules/
+
+# OS / editor noise
+.DS_Store
+*.log
+
+# Interactive tools may have their own build artifacts; ignore common ones.
+# (Each tool's source still lives under interactive/<tool>/ and IS committed.)
+interactive/**/node_modules/

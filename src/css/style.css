@@ -1,0 +1,212 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   LAYOUT & CHROME
+   The consistent outer frame shared by every page. All values come from
+   tokens.css — avoid hardcoding colors/sizes here; add a token instead.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@import "tokens.css";
+
+/* ── Reset-ish base ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading);
+}
+
+a { color: var(--color-link); }
+
+img, iframe { max-width: 100%; }
+
+/* ── Page shell ───────────────────────────────────────────────────────── */
+.shell {
+  max-width: var(--feed-width);
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md) var(--space-xl);
+}
+
+/* ── Top navigation (chrome) ──────────────────────────────────────────── */
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-bottom: var(--space-md);
+  border-bottom: var(--card-border);
+  margin-bottom: var(--space-lg);
+}
+.site-header .brand {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+.site-header .tagline {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-style: italic;
+}
+.site-nav { display: flex; gap: var(--space-md); }
+.site-nav a {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  color: var(--color-text-muted);
+}
+.site-nav a:hover { color: var(--color-link); }
+
+/* ── Footer ───────────────────────────────────────────────────────────── */
+.site-footer {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-md);
+  border-top: var(--card-border);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* ── Headings ─────────────────────────────────────────────────────────── */
+h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; }
+.page-title { font-size: var(--text-xl); margin: 0 0 var(--space-xs); }
+
+/* ── The feed: a grid of cards ────────────────────────────────────────── */
+.feed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--card-gap);
+}
+
+/* ── Card (the consistent content container) ──────────────────────────── */
+.card {
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  padding: var(--card-pad);
+  box-shadow: var(--card-shadow);
+}
+.card a.card-title-link { text-decoration: none; color: var(--color-text); }
+.card a.card-title-link:hover { color: var(--color-link); }
+.card-title { font-size: var(--text-lg); margin: 0 0 var(--space-xs); }
+.card-excerpt { color: var(--color-text-muted); margin: var(--space-sm) 0 0; }
+
+/* Row of metadata under a card/entry title */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ── Status badge ─────────────────────────────────────────────────────── */
+/* Base pill; the per-status color comes from a modifier class below.
+   To add a new status: add a color pair in tokens.css and one rule here. */
+.badge {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: var(--badge-size);
+  font-weight: var(--badge-weight);
+  padding: var(--badge-pad);
+  border-radius: var(--badge-radius);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+  background: var(--c-status-idea-bg);   /* sensible fallback */
+  color: var(--c-status-idea-text);
+}
+.badge--idea      { background: var(--c-status-idea-bg);      color: var(--c-status-idea-text); }
+.badge--prototype { background: var(--c-status-prototype-bg); color: var(--c-status-prototype-text); }
+.badge--working   { background: var(--c-status-working-bg);   color: var(--c-status-working-text); }
+.badge--polished  { background: var(--c-status-polished-bg);  color: var(--c-status-polished-text); }
+
+/* ── Tag chips ────────────────────────────────────────────────────────── */
+.chip {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  padding: var(--chip-pad);
+  border-radius: var(--chip-radius);
+  background: var(--color-chip-bg);
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+.chip:hover { color: var(--color-link); }
+.chip-list { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+
+/* The "type" label gets a subtle distinct look from tags */
+.type-label { font-style: italic; }
+
+/* ── Prose: the reading column for a single entry's body ──────────────── */
+.prose {
+  max-width: var(--content-width);
+}
+.prose p, .prose ul, .prose ol, .prose blockquote { margin: var(--space-md) 0; }
+.prose h2 { margin-top: var(--space-lg); }
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--color-chip-bg);
+  padding: 0.05em 0.3em;
+  border-radius: 4px;
+}
+.prose pre {
+  background: var(--color-card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  padding: var(--space-md);
+  overflow-x: auto;
+}
+.prose pre code { background: none; padding: 0; }
+.prose blockquote {
+  border-left: 3px solid var(--color-border);
+  padding-left: var(--space-md);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ── Embeds: responsive 16:9 frames for iframes & external video ──────── */
+/* Used by both interactive tools and YouTube/Vimeo embeds. */
+.embed {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: var(--space-md) 0;
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  background: var(--color-card-bg);
+}
+.embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+/* Interactive tools sometimes want to be taller than 16:9 — opt in with
+   style="--embed-aspect: 4/5" on the .embed element, or use .embed--tall. */
+.embed[style*="--embed-aspect"] { aspect-ratio: var(--embed-aspect); }
+.embed--tall { aspect-ratio: 3 / 4; }
+
+/* Back link on entry pages */
+.back-link {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  display: inline-block;
+  margin-bottom: var(--space-md);
+}
+
+/* Small responsive niceties */
+@media (max-width: 32rem) {
+  .site-header { flex-direction: column; }
+}

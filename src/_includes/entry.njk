@@ -1,0 +1,62 @@
+---
+# This layout renders one entry page, then nests inside the base chrome.
+layout: base.njk
+---
+<a class="back-link" href="/">← back to the notebook</a>
+
+<article>
+  <header>
+    <h1 class="page-title">{{ title }}</h1>
+    <div class="meta">
+      {% if status %}
+        <span class="badge badge--{{ status }}">{{ status }}</span>
+      {% endif %}
+      {% if type %}
+        <span class="type-label"><a class="chip" href="/types/{{ type | slugify }}/">{{ type }}</a></span>
+      {% endif %}
+      <span>{{ page.date | readableDate }}</span>
+    </div>
+    {% if tags and tags.length %}
+      <div class="chip-list" style="margin-top: var(--space-sm);">
+        {%- for tag in tags %}
+        <a class="chip" href="/tags/{{ tag | slugify }}/">#{{ tag }}</a>
+        {%- endfor %}
+      </div>
+    {% endif %}
+  </header>
+
+  {# ── Interactive tool embed ───────────────────────────────────────────
+     If the entry sets `embed:` in frontmatter, drop in a SANDBOXED iframe
+     pointing at the self-contained tool. `sandbox` keeps the tool walled
+     off so it can't reach into or break the rest of the site.
+     Add `allow-...` tokens only as a given tool needs them. #}
+  {% if embed %}
+    <div class="embed"{% if embedAspect %} style="--embed-aspect: {{ embedAspect }}"{% endif %}>
+      <iframe src="{{ embed }}"
+              title="{{ title }}"
+              loading="lazy"
+              sandbox="allow-scripts allow-same-origin"></iframe>
+    </div>
+    <p class="meta"><a href="{{ embed }}" target="_blank" rel="noopener">Open this experiment full-screen ↗</a></p>
+  {% endif %}
+
+  {# ── External video embed ─────────────────────────────────────────────
+     Videos are hosted on YouTube/Vimeo (never committed to the repo).
+     Set `video:` to the provider's EMBED url, e.g.
+       https://www.youtube.com/embed/VIDEO_ID
+       https://player.vimeo.com/video/VIDEO_ID #}
+  {% if video %}
+    <div class="embed">
+      <iframe src="{{ video }}"
+              title="{{ title }}"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen></iframe>
+    </div>
+  {% endif %}
+
+  {# ── The markdown body of the entry ───────────────────────────────── #}
+  <div class="prose">
+    {{ content | safe }}
+  </div>
+</article>

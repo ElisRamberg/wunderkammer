@@ -1,0 +1,16 @@
+---
+layout: base.njk
+# No `title` so the tab shows just the site name on the homepage.
+---
+{% from "card.njk" import card %}
+
+<h1 class="page-title">The Notebook</h1>
+<p class="meta">{{ collections.entries.length }} entr{% if collections.entries.length == 1 %}y{% else %}ies{% endif %} · newest first</p>
+
+{# The feed builds ITSELF from every public entry — never hand-edited.
+   `collections.entries` is defined in eleventy.config.js. #}
+<ul class="feed">
+  {%- for entry in collections.entries %}
+  {{ card(entry) }}
+  {%- endfor %}
+</ul>

@@ -1,0 +1,17 @@
+---
+layout: base.njk
+title: Types
+permalink: /types/
+---
+<h1 class="page-title">Browse by type</h1>
+<p class="meta">The same notebook, sliced by format. Types are loose, not a fixed list.</p>
+
+<div class="chip-list" style="gap: var(--space-sm); margin-top: var(--space-lg);">
+  {%- for type in collections.entryTypes %}
+    {%- set count = 0 %}
+    {%- for entry in collections.entries %}
+      {%- if entry.data.type == type %}{% set count = count + 1 %}{% endif %}
+    {%- endfor %}
+  <a class="chip" href="/types/{{ type | slugify }}/">{{ type }} <span style="opacity:.6">({{ count }})</span></a>
+  {%- endfor %}
+</div>

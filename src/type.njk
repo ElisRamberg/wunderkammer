@@ -1,0 +1,23 @@
+---
+layout: base.njk
+# One page per type, at /types/<type>/.
+pagination:
+  data: collections.entryTypes
+  size: 1
+  alias: entryType
+permalink: "/types/{{ entryType | slugify }}/"
+eleventyComputed:
+  title: "Type: {{ entryType }}"
+---
+{% from "card.njk" import card %}
+
+<a class="back-link" href="/types/">← all types</a>
+<h1 class="page-title">{{ entryType }}</h1>
+
+<ul class="feed">
+  {%- for entry in collections.entries %}
+    {%- if entry.data.type == entryType %}
+  {{ card(entry) }}
+    {%- endif %}
+  {%- endfor %}
+</ul>

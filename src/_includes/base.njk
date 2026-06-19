@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {# Page title falls back to the site title when a page sets none. #}
+  <title>{% if title %}{{ title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="shell">
+
+    {# ── Outer chrome: shared on every page ─────────────────────────── #}
+    <header class="site-header">
+      <div>
+        <a class="brand" href="/">{{ site.title }}</a>
+        <div class="tagline">{{ site.tagline }}</div>
+      </div>
+      <nav class="site-nav">
+        {%- for link in site.nav %}
+        <a href="{{ link.url }}">{{ link.text }}</a>
+        {%- endfor %}
+      </nav>
+    </header>
+
+    {# ── Page content slots in here ─────────────────────────────────── #}
+    <main>
+      {{ content | safe }}
+    </main>
+
+    <footer class="site-footer">
+      {{ site.title }} · {{ site.tagline }}
+    </footer>
+
+  </div>
+</body>
+</html>

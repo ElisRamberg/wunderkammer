@@ -1,0 +1,19 @@
+---
+layout: base.njk
+title: Tags
+permalink: /tags/
+---
+<h1 class="page-title">Browse by tag</h1>
+<p class="meta">The same notebook, sliced by topic. Tags are loose — add any you like.</p>
+
+{# Lists every tag in use, with how many entries carry it.
+   `collections.entryTags` is auto-built in eleventy.config.js. #}
+<div class="chip-list" style="gap: var(--space-sm); margin-top: var(--space-lg);">
+  {%- for tag in collections.entryTags %}
+    {%- set count = 0 %}
+    {%- for entry in collections.entries %}
+      {%- if tag in entry.data.tags %}{% set count = count + 1 %}{% endif %}
+    {%- endfor %}
+  <a class="chip" href="/tags/{{ tag | slugify }}/">#{{ tag }} <span style="opacity:.6">({{ count }})</span></a>
+  {%- endfor %}
+</div>
