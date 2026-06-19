@@ -1,5 +1,5 @@
 ---
-title: A video log, hosted elsewhere
+title: A video log, hosted elsewhere!!
 type: video
 status: working
 tags: [video, demo]
