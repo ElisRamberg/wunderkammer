@@ -1,0 +1,23 @@
+{
+  "name": "area-population",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Draw any area on a map and see the population inside (local Kontur grid).",
+  "scripts": {
+    "data": "python3 scripts/build-grid.py",
+    "dev": "vite",
+    "build": "rm -rf ../../interactive/area-population/assets && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@turf/turf": "^7.1.0",
+    "h3-js": "^4.4.0",
+    "maplibre-gl": "^4.7.1",
+    "terra-draw": "^1.0.0",
+    "terra-draw-maplibre-gl-adapter": "^1.0.1"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}

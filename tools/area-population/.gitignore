@@ -1,0 +1,6 @@
+# Dev-only copy of the population grid (the shipped copy lives in
+# interactive/area-population/popgrid.bin.gz). Regenerate with `npm run data`.
+public/
+
+# Large source GeoPackage cache for the data build.
+scripts/.cache/

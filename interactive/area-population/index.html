@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Area Population — how many people live here?</title>
+    <script type="module" crossorigin src="./assets/index-CBZLLwZq.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BN6UdYqr.css">
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <!-- Persistent control bar (top-left) -->
+    <header class="toolbar">
+      <span class="wordmark">Area&nbsp;Population</span>
+      <div class="tools">
+        <div class="modes" role="group" aria-label="Selection mode">
+          <button data-mode="polygon" class="mode is-active">Polygon</button>
+          <button data-mode="freehand" class="mode">Freehand</button>
+        </div>
+        <button id="clear" class="clear" hidden>Clear</button>
+      </div>
+    </header>
+
+    <!-- The story panel: leads with the question, then becomes the answer -->
+    <main class="story">
+      <!-- Intro / empty state -->
+      <section class="intro" id="intro">
+        <h1 class="ask">How many people<br />live here?</h1>
+        <p class="lede">
+          Draw any area on the map — a neighbourhood, a city, a whole country —
+          and count everyone inside, instantly, right in your browser.
+        </p>
+        <p class="hint" id="hint">Loading population data…</p>
+      </section>
+
+      <!-- Answer state -->
+      <section class="answer" id="results" aria-live="polite" hidden>
+        <p class="eyebrow">People living inside your shape</p>
+        <p class="headline" id="population">—</p>
+        <p class="exact" id="exact"></p>
+
+        <div class="progress" id="progress" hidden>
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <p class="status" id="status"></p>
+
+        <dl class="stats">
+          <div><dt>Area</dt><dd id="area">—</dd></div>
+          <div><dt>Density</dt><dd id="density">—</dd></div>
+        </dl>
+
+        <p class="source">
+          Population from
+          <a href="https://www.kontur.io/portfolio/population-dataset/" target="_blank" rel="noopener">Kontur</a>
+          2023 — 3&nbsp;km hexagons, counted in your browser.
+        </p>
+      </section>
+    </main>
+
+  </body>
+</html>

@@ -344,6 +344,25 @@ article > header { margin-bottom: var(--space-xl); }
 .embed[style*="--embed-aspect"] { aspect-ratio: var(--embed-aspect); }
 .embed--tall { aspect-ratio: 3 / 4; }
 
+/* Prominent "open the tool on its own full-screen page" call to action.
+   The embed above is only a peek; this button is how a tool graduates into
+   feeling like its own standalone app. */
+.launch { margin: calc(-1 * var(--space-sm)) 0 var(--space-lg); }
+.launch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.6rem 1.1rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--color-link);
+  border-radius: var(--card-radius);
+  text-decoration: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.launch-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
 /* Back link on entry pages */
 .back-link {
   display: inline-block;
