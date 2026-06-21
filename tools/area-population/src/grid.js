@@ -60,6 +60,15 @@ function indexOfCell(hi, lo) {
   return -1;
 }
 
+// Rebuild the hex H3 index string for row i from its stored hi/lo halves
+// (inverse of splitH3). Res-6 indices always start with '8', so the high half
+// never has a significant leading zero to lose.
+function cellString(i) {
+  const lo = (loArr[i] >>> 0).toString(16).padStart(8, "0");
+  const hi = hiArr[i];
+  return (hi ? hi.toString(16) : "") + lo;
+}
+
 // Split a (≤16-char) hex H3 index into hi/lo 32-bit halves without BigInt.
 function splitH3(c) {
   const lo = parseInt(c.slice(-8), 16);
@@ -113,4 +122,14 @@ export function populatedCellsInBbox([w, s, e, n]) {
     if (indexOfCell(hi, lo) >= 0) out.push(c);
   }
   return out;
+}
+
+// Every populated base-grid cell as { h3, pop }. Used by the offline density
+// baker (scripts/bake-density.mjs) to rasterise each cell's hexagon into a
+// single PNG — exposes the raw cells without leaking the internal arrays.
+export function* populatedCells() {
+  for (let i = 0; i < N; i++) {
+    if (popArr[i] <= 0) continue;
+    yield { h3: cellString(i), pop: popArr[i] };
+  }
 }

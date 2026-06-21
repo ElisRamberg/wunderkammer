@@ -4,7 +4,12 @@
 //   • query     — sum population in a polygon (+ progress, + selected cells)
 //   • cellsInView — populated cells in a bbox (to show grid granularity)
 
-import { loadGrid, queryCells, sumCells, populatedCellsInBbox } from "./grid.js";
+import {
+  loadGrid,
+  queryCells,
+  sumCells,
+  populatedCellsInBbox,
+} from "./grid.js";
 
 // Above this, we don't ship the selected cells back for outlining — at that
 // scale the 3 km granularity is irrelevant and drawing them would be heavy.
@@ -41,6 +46,7 @@ self.onmessage = async (e) => {
       self.postMessage({ type: "view", id, cells: cells.length <= 6000 ? cells : null });
       return;
     }
+
   } catch (err) {
     self.postMessage({ type: "error", id: msg.id, message: String(err?.message || err) });
   }

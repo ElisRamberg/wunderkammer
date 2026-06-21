@@ -14,6 +14,38 @@ import { formatInt, formatNum, formatHuman } from "./stats.js";
 // grid in the viewport once you're zoomed in enough for it to be meaningful.
 const GRID_ZOOM = 9;
 
+// map.getBounds() can return a box wider than a real world (e.g. west < -180)
+// once you zoom out past one world-width, since no minZoom is set. H3's
+// polygonToCells expects a simple, non-self-intersecting ring — feeding it an
+// out-of-range rectangle silently returns zero cells, which is why the density
+// overlay went fully blank at max zoom-out. Clamp to the valid lng/lat range
+// (and to the Mercator-safe latitude band) before every worker query.
+function clampBounds(b) {
+  return [
+    Math.max(b.getWest(), -180),
+    Math.max(b.getSouth(), -85),
+    Math.min(b.getEast(), 180),
+    Math.min(b.getNorth(), 85),
+  ];
+}
+
+// ── Density overlay tuning — one live knob, read from the URL ───────────────
+// Tune by appending ?opacity=… to the tool's URL and just reload — NO rebuild
+// needed. (Editing the constant below only takes effect after `npm run build`,
+// because the notebook embeds the BUILT output.)
+//
+// The overlay is a FILL layer: every finest-resolution H3 hexagon (res 6, ~3 km)
+// is drawn as a real polygon, coloured straight from that cell's own people/km².
+// The same small hexagons are used at every zoom — MapLibre culls the single
+// whole-world FeatureCollection, so zooming out just reveals more of them rather
+// than swapping to a coarser grid.
+const params = new URLSearchParams(location.search);
+const numParam = (name, fallback) => {
+  const v = parseFloat(params.get(name));
+  return Number.isFinite(v) ? v : fallback;
+};
+const OPACITY = numParam("opacity", 0.7);
+
 // ── Map ──────────────────────────────────────────────────────────────────────
 const map = new maplibregl.Map({
   container: "map",
@@ -92,6 +124,26 @@ const draw = new TerraDraw({
 });
 
 map.on("load", () => {
+  // Population-density overlay: a single pre-baked raster image (density.png,
+  // generated offline by scripts/bake-density.mjs) coloured by people/km² on a
+  // log scale — pale where sparse, deepening red where dense, transparent over
+  // empty areas. One texture, constant at every zoom, featherlight to render
+  // (no polygons, no per-move recompute). The image is in Web Mercator, so it
+  // drops onto the standard mercator world quad with no warping.
+  map.addSource("density", {
+    type: "image",
+    url: new URL("density.png", document.baseURI).href,
+    coordinates: [
+      [-180, 85.0511], [180, 85.0511], [180, -85.0511], [-180, -85.0511],
+    ],
+  });
+  map.addLayer({
+    id: "density-heat",
+    type: "raster",
+    source: "density",
+    paint: { "raster-opacity": OPACITY, "raster-fade-duration": 0 },
+  });
+
   // Hex overlays: faint viewport grid + highlighted selection.
   map.addSource("grid-cells", { type: "geojson", data: featureCollection([]) });
   map.addLayer({
@@ -255,11 +307,10 @@ function refreshGrid() {
     renderGrid("grid-cells", []);
     return;
   }
-  const b = map.getBounds();
   worker.postMessage({
     type: "cellsInView",
     id: ++viewId,
-    bbox: [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()],
+    bbox: clampBounds(map.getBounds()),
   });
 }
 
