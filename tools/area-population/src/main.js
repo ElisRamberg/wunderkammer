@@ -123,22 +123,27 @@ const draw = new TerraDraw({
   modes: [new TerraDrawPolygonMode(), new TerraDrawFreehandMode()],
 });
 
-map.on("load", () => {
-  // Population-density overlay: a single pre-baked raster image (density.png,
-  // generated offline by scripts/bake-density.mjs) coloured by people/km² on a
-  // log scale — pale where sparse, deepening red where dense, transparent over
-  // empty areas. One texture, constant at every zoom, featherlight to render
-  // (no polygons, no per-move recompute). The image is in Web Mercator, so it
-  // drops onto the standard mercator world quad with no warping.
+map.on("load", async () => {
+  // Population-density overlay: a pre-baked {z}/{x}/{y} raster tile pyramid
+  // (public/density/, generated offline by scripts/bake-density.mjs),
+  // coloured by people/km² on a log scale — pale where sparse, deepening red
+  // where dense, transparent over empty areas. A native MapLibre raster
+  // source only fetches/decodes tiles intersecting the current viewport and
+  // zoom, and evicts offscreen ones as you pan — no manual tile bookkeeping.
+  // Build the base URL with `new URL` (so it still works under the GitHub
+  // Pages path prefix), then append the {z}/{x}/{y} template as a plain
+  // string — `new URL("…/{z}/{x}/{y}.png")` would percent-encode the braces
+  // and MapLibre would request the literal, un-substituted path.
+  const densityBase = new URL("density/", document.baseURI).href;
   map.addSource("density", {
-    type: "image",
-    url: new URL("density.png", document.baseURI).href,
-    coordinates: [
-      [-180, 85.0511], [180, 85.0511], [180, -85.0511], [-180, -85.0511],
-    ],
+    type: "raster",
+    tiles: [`${densityBase}{z}/{x}/{y}.png`],
+    tileSize: 512,
+    minzoom: 0,
+    maxzoom: 5,
   });
   map.addLayer({
-    id: "density-heat",
+    id: "density",
     type: "raster",
     source: "density",
     paint: { "raster-opacity": OPACITY, "raster-fade-duration": 0 },

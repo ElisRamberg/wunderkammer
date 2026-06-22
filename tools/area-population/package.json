@@ -8,7 +8,7 @@
     "data": "python3 scripts/build-grid.py",
     "bake": "node scripts/bake-density.mjs",
     "dev": "vite",
-    "build": "rm -rf ../../interactive/area-population/assets && vite build",
+    "build": "rm -rf ../../interactive/area-population/assets ../../interactive/area-population/density && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -68,6 +68,38 @@ entry's `embed`/full-screen link at wherever it's hosted. Needs a live backend?
 GitHub Pages can't run one — host that piece separately (e.g. Cloudflare Worker)
 and have the static frontend fetch from it; the blog side stays unchanged.
 
+### area-population: baked raster tile pyramid for the density overlay
+The population-density overlay is NOT live-rendered — it's offline-baked into
+a static `{z}/{x}/{y}` raster tile pyramid, since a live ~2M-polygon (H3 res-6
+hexagon) fill was too heavy to render at runtime, and an earlier flat-grid
+bake (one big 8×8 mosaic of 8192px tiles, all loaded eagerly via MapLibre
+`image` sources) downloaded/decoded all 115MB on every visit regardless of
+viewport or zoom.
+- `tools/area-population/scripts/bake-density.mjs` (`npm run bake`) rasterises
+  the committed population grid into a standard XYZ pyramid: zoom levels 0–5,
+  512px tiles (MapLibre's modern default `tileSize`). Each zoom level
+  reprojects the populated H3 cells into that zoom's Web-Mercator pixel space
+  and rasterises each one as its actual filled hexagon (not a single splatted
+  pixel); tiles with zero populated cells are skipped entirely (not written)
+  to save space — same as before, just applied per zoom level.
+- Output: `public/density/{z}/{x}/{y}.png` for every non-empty tile, plus a
+  `manifest.json` kept only for debugging stats (`{minzoom, maxzoom,
+  tileSize, writtenTiles, totalBytes}`) — not read at runtime. Committed like
+  any other build output under `interactive/area-population/`.
+- `src/main.js` adds a single native MapLibre `raster` source (`tiles:
+  ["…/density/{z}/{x}/{y}.png"]`, `minzoom: 0`, `maxzoom: 5`) + one `raster`
+  layer. MapLibre's tile pyramid support means it only fetches/decodes tiles
+  intersecting the current viewport and zoom, and evicts offscreen ones when
+  panning — no manual per-tile bookkeeping. Past `maxzoom: 5` MapLibre
+  over-zooms the nearest available tile automatically. A missing tile (skipped
+  as empty at bake time) 404s and MapLibre just renders it blank/transparent.
+  Gotcha: build the `{z}/{x}/{y}` template as a plain string, not via
+  `new URL(...)` — the URL constructor percent-encodes the braces, which
+  silently breaks tile substitution (MapLibre requests the literal
+  un-substituted path with no error).
+- Only re-run `npm run bake` (+ rebuild) if the population data or baking
+  logic changes; it's a manual offline step, not part of the CI deploy.
+
 ## Two ways a tool is presented (both stay linked to the notebook)
 1. **Embedded preview** — sandboxed iframe inside the notebook chrome, sized to
    the entry. Good for small demos seen in-context in the feed.
